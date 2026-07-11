@@ -1,43 +1,65 @@
-Laravel Crawler Detect
-=======
-[![Build Status](https://img.shields.io/travis/JayBizzle/Laravel-Crawler-Detect/master.svg?style=flat-square)](https://travis-ci.org/JayBizzle/Laravel-Crawler-Detect) [![Total Downloads](https://img.shields.io/packagist/dt/JayBizzle/Laravel-Crawler-Detect.svg?style=flat-square)](https://packagist.org/packages/jaybizzle/laravel-crawler-detect)
-[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/JayBizzle/Laravel-Crawler-Detect.svg?style=flat-square)](https://scrutinizer-ci.com/g/JayBizzle/Laravel-Crawler-Detect/?branch=master) [![StyleCI](https://styleci.io/repos/32484055/shield)](https://styleci.io/repos/32484055)
+# Laravel Crawler Detect
 
-A Laravel wrapper for [CrawlerDetect](https://github.com/JayBizzle/Crawler-Detect) - the web crawler detection library
+[![Tests](https://img.shields.io/github/actions/workflow/status/JayBizzle/Laravel-Crawler-Detect/tests.yml?branch=master&style=flat-square&label=tests)](https://github.com/JayBizzle/Laravel-Crawler-Detect/actions/workflows/tests.yml)
+[![Total Downloads](https://img.shields.io/packagist/dt/JayBizzle/Laravel-Crawler-Detect.svg?style=flat-square)](https://packagist.org/packages/jaybizzle/laravel-crawler-detect)
+[![Latest Version](https://img.shields.io/packagist/v/JayBizzle/Laravel-Crawler-Detect.svg?style=flat-square)](https://packagist.org/packages/jaybizzle/laravel-crawler-detect)
+[![License](https://img.shields.io/packagist/l/JayBizzle/Laravel-Crawler-Detect.svg?style=flat-square)](LICENSE)
 
-Installation
-============
+A Laravel wrapper for [Crawler-Detect](https://github.com/JayBizzle/Crawler-Detect) - the web crawler detection library.
 
-Run `composer require jaybizzle/laravel-crawler-detect 1.*` or add `"jaybizzle/laravel-crawler-detect": "1.*"` to your `composer.json` file.
+## Requirements
 
-The last version compatible with Laravel 4 was [v1.0.2](https://github.com/JayBizzle/Laravel-Crawler-Detect/tree/v1.0.2) so if you need that, you will have to fix your `composer.json` to that specific version.
+- PHP 8.1+
+- Laravel 10, 11 or 12
 
-Add the following to the `providers` array in your `config/app.php` file..
+Need support for an older version of Laravel or PHP? Use [v1.3.0](https://github.com/JayBizzle/Laravel-Crawler-Detect/tree/v1.3.0) of this package.
 
-```PHP
-  Jaybizzle\LaravelCrawlerDetect\LaravelCrawlerDetectServiceProvider::class,
+## Installation
+
+```bash
+composer require jaybizzle/laravel-crawler-detect
 ```
 
-...and the following to your `aliases` array...
+The service provider and the `Crawler` facade alias are registered automatically via package auto-discovery.
 
-```PHP
-  'Crawler'   => Jaybizzle\LaravelCrawlerDetect\Facades\LaravelCrawlerDetect::class,
-```
+## Usage
 
-Laravel 5.5 uses Package Auto-Discovery, so doesn't require you to manually add the ServiceProvider.
-
-Usage
-==================
-```PHP
+```php
 use Crawler;
 
-// Check current 'visitors' user agent
-if(Crawler::isCrawler()) {
-  // true if crawler user agent detected
+// Check the current visitor's user agent
+if (Crawler::isCrawler()) {
+    // true if a crawler user agent was detected
 }
 
-
-// Pass a user agent as a string
-if(Crawler::isCrawler('Mozilla/5.0 (compatible; aiHitBot/2.9; +https://www.aihitdata.com/about)')) {
-  // true if crawler user agent detected
+// Or pass a user agent string to check
+if (Crawler::isCrawler('Mozilla/5.0 (compatible; aiHitBot/2.9; +https://www.aihitdata.com/about)')) {
+    // true if a crawler user agent was detected
 }
+
+// Output the name of the bot that matched (if any)
+echo Crawler::getMatches();
+```
+
+You can also type-hint the underlying class and let the container inject it:
+
+```php
+use Jaybizzle\CrawlerDetect\CrawlerDetect;
+
+public function index(CrawlerDetect $crawlerDetect)
+{
+    if ($crawlerDetect->isCrawler()) {
+        // ...
+    }
+}
+```
+
+## Testing
+
+```bash
+composer test
+```
+
+## License
+
+Laravel Crawler Detect is open-sourced software licensed under the [MIT license](LICENSE).
