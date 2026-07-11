@@ -2,7 +2,7 @@
     "name": "jaybizzle/laravel-crawler-detect",
     "description": "A Laravel package to detect web crawlers via the user agent",
     "keywords": ["laravel", "spider", "bot", "detect", "user-agent", "crawler", "crawler detect", "crawler detector", "crawlerdetect", "php crawler detect"],
-    "homepage": "http://github.com/JayBizzle/Laravel-Crawler-Detect",
+    "homepage": "https://github.com/JayBizzle/Laravel-Crawler-Detect",
     "license": "MIT",
     "authors": [
         {
@@ -11,17 +11,28 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
-        "jaybizzle/crawler-detect": "1.*"
+        "php": "^8.1",
+        "illuminate/support": "^10.0|^11.0|^12.0",
+        "jaybizzle/crawler-detect": "^1.2"
     },
     "require-dev": {
-        "orchestra/testbench": "^3.2|^3.4",
-        "phpunit/phpunit": "^4.8|^5.5|^6.5"
+        "laravel/pint": "^1.13",
+        "orchestra/testbench": "^8.0|^9.0|^10.0",
+        "phpunit/phpunit": "^10.5|^11.0|^12.0"
     },
     "autoload": {
         "psr-4": {
             "Jaybizzle\\LaravelCrawlerDetect\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Jaybizzle\\LaravelCrawlerDetect\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "lint": "pint --test"
     },
     "extra": {
         "laravel": {
@@ -32,6 +43,9 @@
                 "Crawler": "Jaybizzle\\LaravelCrawlerDetect\\Facades\\LaravelCrawlerDetect"
             }
         }
+    },
+    "config": {
+        "sort-packages": true
     },
     "minimum-stability": "stable"
 }
