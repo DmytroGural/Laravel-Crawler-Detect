@@ -10,7 +10,7 @@ A Laravel wrapper for [Crawler-Detect](https://github.com/JayBizzle/Crawler-Dete
 ## Requirements
 
 - PHP 8.1+
-- Laravel 10, 11 or 12
+- Laravel 10, 11, 12 or 13
 
 Need support for an older version of Laravel or PHP? Use [v1.3.0](https://github.com/JayBizzle/Laravel-Crawler-Detect/tree/v1.3.0) of this package.
 
