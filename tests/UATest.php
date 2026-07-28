@@ -60,6 +60,10 @@ class UATest extends TestCase
 
         $this->assertFalse($request->isCrawler());
 
+        foreach ($this->fixture('devices.txt') as $userAgent) {
+            $this->assertFalse($request->isCrawler($userAgent));
+        }
+
         foreach ($this->fixture('crawlers.txt') as $userAgent) {
             $this->assertTrue($request->isCrawler($userAgent));
         }
