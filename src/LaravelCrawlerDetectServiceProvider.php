@@ -16,11 +16,8 @@ class LaravelCrawlerDetectServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(CrawlerDetect::class, function (Application $app, array $parameters = []) {
-            $headers = $parameters['headers'] ?? $app['request']->server();
-            $userAgent = $parameters['userAgent'] ?? null;
-
-            return new CrawlerDetect($headers, $userAgent);
+        $this->app->singleton(CrawlerDetect::class, function (Application $app) {
+            return new CrawlerDetect($app['request']->server());
         });
 
         $this->app->alias(CrawlerDetect::class, 'LaravelCrawlerDetect');
@@ -33,15 +30,17 @@ class LaravelCrawlerDetectServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Request::macro('crawler', function (?array $headers = null, ?string $userAgent = null) {
-            return app(CrawlerDetect::class, [
-                'headers' => $headers,
-                'userAgent' => $userAgent,
-            ]);
+        Request::macro('crawler', function (?string $userAgent = null) {
+            $crawler = app(CrawlerDetect::class);
+
+            $crawler->setHttpHeaders($this->server->all());
+            $crawler->setUserAgent($userAgent ?? $this->userAgent());
+
+            return $crawler;
         });
 
         Request::macro('isCrawler', function (?string $userAgent = null) {
-            return $this->crawler(userAgent: $userAgent)->isCrawler();
+            return $this->crawler($userAgent)->isCrawler();
         });
     }
 }
