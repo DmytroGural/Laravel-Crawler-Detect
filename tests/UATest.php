@@ -10,6 +10,8 @@ use Orchestra\Testbench\TestCase;
 
 class UATest extends TestCase
 {
+    const CRAWLER_USER_AGENT = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
+
     protected function getPackageProviders($app)
     {
         return [LaravelCrawlerDetectServiceProvider::class];
@@ -72,9 +74,59 @@ class UATest extends TestCase
     public function test_request_macro_preserves_matches_state()
     {
         $request = Request::create('/', 'GET');
-        $this->assertTrue($request->isCrawler('Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'));
+        $this->assertTrue($request->isCrawler(self::CRAWLER_USER_AGENT));
         $this->assertNotNull($request->crawler()->getMatches());
         $this->assertSame('Googlebot', $request->crawler()->getMatches());
+    }
+
+    public function test_request_macro_does_not_mutate_the_shared_instance()
+    {
+        $request = $this->humanRequest();
+        $this->app->instance('request', $request);
+
+        $shared = $this->app->make(CrawlerDetect::class);
+        $this->assertFalse($shared->isCrawler());
+
+        $request->isCrawler(self::CRAWLER_USER_AGENT);
+
+        $this->assertFalse($shared->isCrawler());
+        $this->assertFalse(Crawler::isCrawler());
+        $this->assertNotSame($shared, $request->crawler());
+    }
+
+    public function test_request_macro_instances_are_scoped_to_the_request()
+    {
+        $crawler = Request::create('/', 'GET', [], [], [], [
+            'HTTP_USER_AGENT' => self::CRAWLER_USER_AGENT,
+        ]);
+        $human = $this->humanRequest();
+
+        $this->assertSame($crawler->crawler(), $crawler->crawler());
+        $this->assertNotSame($crawler->crawler(), $human->crawler());
+
+        $this->assertTrue($crawler->isCrawler());
+        $this->assertFalse($human->isCrawler());
+        $this->assertTrue($crawler->isCrawler());
+    }
+
+    public function test_request_macro_user_agent_override_does_not_persist()
+    {
+        $request = $this->humanRequest();
+
+        $this->assertTrue($request->isCrawler(self::CRAWLER_USER_AGENT));
+        $this->assertFalse($request->isCrawler());
+    }
+
+    /**
+     * A request from a browser rather than a crawler.
+     *
+     * @return Request
+     */
+    protected function humanRequest()
+    {
+        return Request::create('/', 'GET', [], [], [], [
+            'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        ]);
     }
 
     /**
